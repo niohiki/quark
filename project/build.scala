@@ -39,15 +39,15 @@ object Build extends sbt.Build {
 }
 class SubProject(main:Project,folder:File){ 
   lazy val subProjectSettings = Seq(
-    packageOptions.in(Compile,packageBin).in(project) += { 
-      Package.ManifestAttributes(java.util.jar.Attributes.Name.CLASS_PATH -> "lib/quark.jar")
-    }
+    packageOptions.in(Compile,packageBin).in(project) <+= (scalaInstance) map (sInstance => { 
+      Package.ManifestAttributes(java.util.jar.Attributes.Name.CLASS_PATH -> (sInstance.jars.map("lib/"+_.getName).reduce(_+" "+_) + " lib/quark.jar"))
+    })
   )
   lazy val subProjectTasks = Seq(
-    TaskKey[Unit]("dist","Make distribution folder") <<= (clean,packageBin.in(Compile).in(main),
+    TaskKey[Unit]("dist","Make distribution folder") <<= (clean,scalaInstance,packageBin.in(Compile).in(main),
 							  packageBin.in(Compile).in(project)) map
-    ((Unit,mainJar,thisJar) =>{ 
-      IO.copy(Seq(
+    ((Unit,sInstance,mainJar,thisJar) =>{ 
+      IO.copy(sInstance.jars.map(jarFile => jarFile -> folder / "dist" / "lib" / jarFile.getName) ++ Seq(
 	mainJar -> folder / "dist" / "lib" / "quark.jar",
 	thisJar -> folder / "dist" / (folder.getName+".jar")
       ))

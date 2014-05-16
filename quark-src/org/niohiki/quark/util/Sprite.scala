@@ -34,8 +34,10 @@ trait SpriteRenderer extends Serializable {
 }
 class SpriteAnimation(image_names: List[String], init: Int, fps: Double,
   init_transform: AffineTransform => Unit = null,
-  init_b_box: BBox => Unit = null) extends SpriteRenderer {
-  def images(i: Int) = Resources.getImage(image_names(i))
+  init_b_box: BBox => Unit = null, resources: => Resources = DefaultResources)
+  extends SpriteRenderer {
+
+  def images(i: Int) = resources.getImage(image_names(i))
   private var time: Double = init
   private var frame: Int = init
   protected val trans = new AffineTransform
@@ -53,8 +55,10 @@ class SpriteAnimation(image_names: List[String], init: Int, fps: Double,
 }
 class SpriteStatic(image_name: String,
   init_transform: AffineTransform => Unit = null,
-  init_b_box: BBox => Unit = null) extends SpriteRenderer {
-  def image_val = Resources.getImage(image_name)
+  init_b_box: BBox => Unit = null, resources: => Resources = DefaultResources)
+  extends SpriteRenderer {
+
+  def image_val = resources.getImage(image_name)
   protected val trans = new AffineTransform
   private val b_box = new BBox(image_val.getWidth, image_val.getHeight)
   if (init_b_box != null) init_b_box(b_box)

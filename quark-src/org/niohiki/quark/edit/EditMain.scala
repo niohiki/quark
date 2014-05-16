@@ -11,11 +11,9 @@ import java.awt.event.MouseMotionAdapter
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
-
 import scala.Array.canBuildFrom
 import scala.collection.mutable.HashMap
 import scala.xml.Node
-
 import javax.swing.JButton
 import javax.swing.JComboBox
 import javax.swing.JLabel
@@ -32,13 +30,15 @@ import org.niohiki.quark.core.Updateable
 import org.niohiki.quark.core.WorldSettings
 import org.niohiki.quark.util.Resources
 import org.niohiki.quark.util.Tile
+import org.niohiki.quark.util.DefaultResources
 
-class EditWindow(val editor_list: String, val default_file: String) extends RenderWindow(
-  ApplicationSettings(title = "Editor"),
-  CanvasSettings(width = 700, height = 600, buffers = 2, debug_mode = true),
-  ThreadSettings(update_cps = 120, render_cps = 60, background_cps = 30), null, rc => {
-  }) {
-  private var xml_list = Resources.getXML(editor_list)
+class EditWindow(val editor_list: String, val default_file: String, resources: => Resources = DefaultResources)
+  extends RenderWindow(
+    ApplicationSettings(title = "Editor"),
+    CanvasSettings(width = 700, height = 600, buffers = 2, debug_mode = true),
+    ThreadSettings(update_cps = 120, render_cps = 60, background_cps = 30), null, rc => {
+    }) {
+  private var xml_list = resources.getXML(editor_list)
   private val world_element = xml_list \ "world"
   private val world_settings = WorldSettings(
     x_tiles = (world_element \ "@x_tiles").toString.toInt,
@@ -96,7 +96,7 @@ class EditWindow(val editor_list: String, val default_file: String) extends Rend
             <spatial type={ e.type_name } x={ e.xCenter.toString } y={ e.yCenter.toString } params={ e.params }/>
           }
         }.map { _.toString }.reduceLeft { _ + "\n\t\t" + _ }.toString + "\n\t</load>\n</xml>"
-      val file = new File(Resources.xml_path + output_file.getText)
+      val file = new File(resources.xml_path + output_file.getText)
       file.getParentFile.mkdirs
       file.createNewFile
       val printer = new PrintStream(new FileOutputStream(file))
@@ -109,7 +109,7 @@ class EditWindow(val editor_list: String, val default_file: String) extends Rend
       render_canvas.removeLayer(getLayer)
       entity_types_combo.removeAllItems
       val map = new HashMap[String, Node]
-      xml_list = Resources.getXML(output_file.getText)
+      xml_list = resources.getXML(output_file.getText)
       val world = xml_list \ "world"
       val world_settings = WorldSettings(
         x_tiles = (world \ "@x_tiles").toString.toInt,

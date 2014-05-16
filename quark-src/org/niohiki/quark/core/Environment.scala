@@ -1,12 +1,15 @@
 package org.niohiki.quark.core
 
 import java.io.File
+import java.awt.image.BufferedImage
 
 trait LayerInterface {
   def follow(s: Spatial, margin: Double): Unit
   def xCenter: Double
   def yCenter: Double
   def setCenter(x: Double, y: Double): Unit
+  def moveCenter(dx: Double, dy: Double): Unit
+  def world: World
 }
 trait CanvasInterface {
   def settings: CanvasSettings
@@ -16,7 +19,9 @@ trait CanvasInterface {
   def save(file: File, info: Any): Unit
   def load(file: File): Any
   def runInBackground(load: Unit => Unit): Unit
-  def setCursor(image_name: String): Unit
+  def setCursor(image: BufferedImage): Unit
+  def getWidth: Int
+  def getHeight: Int
 }
 trait InputInterface {
   def isKeyPressed(keyCode: Int): Boolean

@@ -3,7 +3,6 @@ package org.niohiki.quark.test
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.event.MouseEvent
-
 import org.niohiki.quark.core.ApplicationSettings
 import org.niohiki.quark.core.CanvasSettings
 import org.niohiki.quark.core.Environment
@@ -14,6 +13,7 @@ import org.niohiki.quark.core.ThreadSettings
 import org.niohiki.quark.core.Updateable
 import org.niohiki.quark.core.WorldSettings
 import org.niohiki.quark.util.Resources
+import org.niohiki.quark.util.DefaultResources
 
 object Test {
   def main(args: Array[String]) {
@@ -33,7 +33,7 @@ class Square extends Spatial with Renderable with Updateable {
   def render(env: Environment, g: Graphics2D) = {
     g.setColor(Color.black)
     g.fillRect(-20, -20, 40, 40)
-    g.drawImage(Resources.getImage("bret"), -16, -16, null)
+    g.drawImage(DefaultResources.getImage("bret"), -16, -16, null)
   }
   def update(env: Environment, delta: Double) {
     val evs = env.input

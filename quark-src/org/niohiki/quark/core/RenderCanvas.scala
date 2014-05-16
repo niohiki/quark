@@ -17,11 +17,10 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
-
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Queue
-
 import org.niohiki.quark.util.Resources
+import java.awt.image.BufferedImage
 
 class RenderCanvas extends Canvas with CanvasInterface {
   private var settings_var: CanvasSettings = null; private var thread_settings_var: ThreadSettings = null
@@ -128,10 +127,9 @@ class RenderCanvas extends Canvas with CanvasInterface {
     return retval
   }
   def runInBackground(load: Unit => Unit) = background_orders += load
-  def setCursor(image_name: String) {
-    val image = Resources.getImage(image_name)
+  def setCursor(image: BufferedImage) {
     RenderCanvas.this.setCursor(getToolkit().createCustomCursor(image,
-      new Point(image.getWidth / 2, image.getHeight / 2), image_name))
+      new Point(image.getWidth / 2, image.getHeight / 2), "cursor"))
   }
   def removeLayer(view: Layer) = layers -= view
 

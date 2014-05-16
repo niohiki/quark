@@ -297,5 +297,9 @@ class Layer(val size_x: Int, val size_y: Int) extends LayerInterface {
     x_center = x
     y_center = y
   }
+  def moveCenter(dx: Double, dy: Double){
+    x_center += dx
+    y_center += dy
+  }
 }
 case class WorldSettings(val x_tiles: Int = 1, val y_tiles: Int = 1, val spacing: Double = 0.0, val margin: Double = 0.0)

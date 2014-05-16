@@ -9,8 +9,11 @@ import org.niohiki.quark.core.Environment
 import org.niohiki.quark.core.Renderable
 import org.niohiki.quark.core.Spatial
 
-class Image(image_name: String, init_transform: AffineTransform => Unit = null) extends Spatial with Renderable {
-  def image = Resources.getImage(image_name)
+class Image(image_name: String, init_transform: AffineTransform => Unit = null,
+  resources: => Resources = DefaultResources)
+  extends Spatial with Renderable {
+
+  def image = resources.getImage(image_name)
   val transform = new AffineTransform
   if (init_transform != null) {
     init_transform(transform)
@@ -23,8 +26,10 @@ class Image(image_name: String, init_transform: AffineTransform => Unit = null) 
     transform.rotate(angle, image.getWidth / 2, image.getHeight / 2)
   }
 }
-class Tile(image_name: String, init_transform: AffineTransform => Unit = null) extends Image(image_name, init_transform)
-  with Collidable {
+class Tile(image_name: String, init_transform: AffineTransform => Unit = null,
+  resources: => Resources = DefaultResources)
+  extends Image(image_name, init_transform, resources) with Collidable {
+
   private val b_box = new BBox(image.getWidth, image.getHeight)
   def bBox = b_box
 }

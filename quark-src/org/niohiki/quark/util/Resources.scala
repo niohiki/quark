@@ -5,40 +5,45 @@ import java.awt.image.BufferedImage
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.InputStream
 import java.io.InputStreamReader
-
 import scala.collection.mutable.HashMap
 import scala.xml.Elem
 import scala.xml.XML
-
 import javax.imageio.ImageIO
+import java.io.OutputStream
 
 trait Log {
   def log(c: Char): Unit
 }
 object Resources {
-  val quark_base_path = "/org/niohiki/quark"
+  val quark_base_path = "/org/niohiki/quark/"
 }
-object DefaultResources extends Resources(Resources.quark_base_path){
+object DefaultResources extends Resources(Resources.quark_base_path) {
   def setBasePath(_base_path: String) = base_path = _base_path
 }
 class Resources(protected var base_path: String) {
-  def image_path = base_path + "/images/"
-  def xml_path = base_path + "/xml/"
-  def font_path = base_path + "/fonts/"
-  def script_path = base_path + "/scripts/"
-  private val classes_map_name = "classes_map"
-  private val classes = new HashMap[String, Class[_]]
+  def image_path = "images/"
+  def xml_path = "xml/"
+  def font_path = "fonts/"
+  def script_path = "scripts/"
   private val images = new HashMap[String, BufferedImage]
   private val fonts = new HashMap[String, Font]
-  private val dummy_image = ImageIO.read(getResource(Resources.quark_base_path + "/dummy_image.bmp"))
+  private val dummy_image = ImageIO.read(
+    getClass.getResourceAsStream(Resources.quark_base_path + "/dummy_image.bmp"))
   private val dummy_font = new Font("Arial", Font.PLAIN, 1)
   def getResource(name: String): InputStream = {
-    return new File(name) match {
+    return new File("." + base_path + name) match {
       case f if f.exists => new FileInputStream(f)
-      case f => getClass.getResourceAsStream(name)
+      case f => getClass.getResourceAsStream(base_path + name)
     }
+  }
+  def getExternalResourceOutput(name: String): OutputStream = {
+    val file = new File("." + base_path + name)
+    file.getParentFile.mkdirs
+    file.createNewFile
+    new FileOutputStream(file)
   }
   def getResourceAsString(name: String): String = {
     val stream = getResource(name)

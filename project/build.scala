@@ -1,4 +1,4 @@
-import sbt._
+rary depenimport sbt._
 import Keys._
 import complete.DefaultParsers._
 
@@ -53,8 +53,9 @@ class SubProject(main:Project,folder:File){
       ))
       println("Gathered jar files in dist folder")
     }),
-    update.in(project) <<= (update.in(project), classDirectory.in(Compile).in(project), name.in(project)) map ((report,classDir,projectName)=>{ 
-      IO.write(folder / ".classpath", BuildFiles.classpathFile(IO.relativize(folder,classDir).getOrElse("bin")))
+    update.in(project) <<= (scalaInstance,update.in(project), classDirectory.in(Compile).in(project), name.in(project)) map
+    ((sInstance,report,classDir,projectName)=>{ 
+      IO.write(folder / ".classpath", BuildFiles.classpathFile(IO.relativize(folder,classDir).getOrElse("bin"),sInstance.jars.map(_.getAbsolutePath)))
       IO.write(folder / ".project", BuildFiles.projectFile(projectName))
       report
     })
@@ -63,14 +64,12 @@ class SubProject(main:Project,folder:File){
 			     settings = Defaults.defaultSettings ++ subProjectSettings ++ subProjectTasks) dependsOn(main) aggregate(main)
 }
 object BuildFiles{ 
-  def classpathFile(output:String): String =
+  def classpathFile(output:String,scalaJars:Seq[String]): String =
 """<classpath>
   <classpathentry kind="src" path="src"/>
   <classpathentry kind="src" path="res"/>
-  <classpathentry kind="src" path="quark-src"/>
-  <classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_COMPILER_CONTAINER"/>
-  <classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"/>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="src" path="quark-src"/>""" + scalaJars.fold("\n")(_+"""<classpathentry kind="lib" path=""""+_+""""/>)\n""")+
+"""  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="output" path=""""+ output +""""/>
 </classpath>
 """

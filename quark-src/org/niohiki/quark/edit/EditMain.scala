@@ -66,7 +66,7 @@ class EditWindow(val editor_list: String, val default_file: String, resources: =
   editor_panel.setLayout(new BorderLayout)
   editor_panel.add(render_canvas, BorderLayout.CENTER)
   tab_panel.add("Editor", editor_panel)
-  add(tab_panel, BorderLayout.NORTH)
+  add(tab_panel, BorderLayout.CENTER)
   private val north_panel = new JPanel
   north_panel.setLayout(new GridLayout(3, 1))
   editor_panel.add(north_panel, BorderLayout.NORTH)
@@ -96,10 +96,9 @@ class EditWindow(val editor_list: String, val default_file: String, resources: =
             <spatial type={ e.type_name } x={ e.xCenter.toString } y={ e.yCenter.toString } params={ e.params }/>
           }
         }.map { _.toString }.reduceLeft { _ + "\n\t\t" + _ }.toString + "\n\t</load>\n</xml>"
-      val file = new File(resources.xml_path + output_file.getText)
-      file.getParentFile.mkdirs
-      file.createNewFile
-      val printer = new PrintStream(new FileOutputStream(file))
+      val printer = new PrintStream(resources.getExternalResourceOutput(
+          resources.xml_path + output_file.getText))
+      println("file printed lol")
       printer.print(xml)
       printer.close
     }

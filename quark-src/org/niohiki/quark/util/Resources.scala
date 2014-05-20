@@ -31,16 +31,16 @@ class Resources(protected var base_path: String) {
   private val images = new HashMap[String, BufferedImage]
   private val fonts = new HashMap[String, Font]
   private val dummy_image = ImageIO.read(
-    getClass.getResourceAsStream(Resources.quark_base_path + "/dummy_image.bmp"))
+    getClass.getResourceAsStream(Resources.quark_base_path + "dummy_image.bmp"))
   private val dummy_font = new Font("Arial", Font.PLAIN, 1)
   def getResource(name: String): InputStream = {
-    return new File("." + base_path + name) match {
+    return new File("./quark-files/" + base_path + name) match {
       case f if f.exists => new FileInputStream(f)
       case f => getClass.getResourceAsStream(base_path + name)
     }
   }
   def getExternalResourceOutput(name: String): OutputStream = {
-    val file = new File("." + base_path + name)
+    val file = new File("./quark-files/" + base_path + name)
     file.getParentFile.mkdirs
     file.createNewFile
     new FileOutputStream(file)

@@ -1,4 +1,4 @@
-rary depenimport sbt._
+import sbt._
 import Keys._
 import complete.DefaultParsers._
 
